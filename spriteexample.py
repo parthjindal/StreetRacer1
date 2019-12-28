@@ -9,10 +9,6 @@ game_folder=os.path.dirname(__file__)
 imgfolder=os.path.join(game_folder,"img")
 font_folder=os.path.join(game_folder,"fonts")
 
-
-
-speed_road=0
-
 #initialze pygame and create window
 pygame.init()
 pygame.mixer.init()
@@ -23,21 +19,28 @@ clock = pygame.time.Clock()
 
 
 
-font_name ='/home/parth/pygame/pokemon.ttf'
+font_name ='fonts/pokemon.ttf'
 sndfolder=os.path.join(game_folder,"sounds")
 
 ##LOAD ALL IN GRAPHICS
 background=pygame.image.load(os.path.join(imgfolder,"background.png")).convert()
+
 background=pygame.transform.scale(background,(WIDTH,HIEGHT))
+
 background_rect=background.get_rect()
+
 mini_player=pygame.image.load(os.path.join(imgfolder,"car.png")).convert()
-mini_player=pygame.transform.scale(mini_player,(25,19))
+
+mini_player=pygame.transform.scale(mini_player,(20,30))
+
 mini_player.set_colorkey(BLACK)
+
 explosion_anim={}
+
 explosion_anim['player']=[]
 
-
 explosion_anim['lg']=[]
+
 explosion_anim['sm']=[]
 
 for i in range(9):
@@ -74,11 +77,23 @@ def draw_shield_bar(surf,x,y,pct,full):
 	outline_rect=pygame.Rect(x,y,BAR_LENGTH,BAR_HEIGHT)
 	fill_rect = pygame.Rect(x,y,fill,BAR_HEIGHT)
 	#draw_text(surf,str(pct),10,WIDTH-10,HIEGHT-10)
-	if fill<80 and full!=500:
+	if fill<=35 and full!=500:
 		pygame.draw.rect(surf,RED,fill_rect)
 	else:
 		pygame.draw.rect(surf,(0,255,0),fill_rect)
 	pygame.draw.rect(surf,WHITE,outline_rect,2)
+
+def draw_nitro(surf,x,y,pct,full):
+	if pct<0:
+		pct=0
+
+	fill=(float(pct)/full)*100
+
+	outline_rect=pygame.Rect(x,y,BAR_HEIGHT,BAR_LENGTH)
+	fill_rect = pygame.Rect(x,y,BAR_HEIGHT,fill)
+	pygame.draw.rect(surf,(0,255,255),fill_rect)
+	pygame.draw.rect(surf,WHITE,outline_rect,2)
+
 
 
 
@@ -203,7 +218,7 @@ class strips(pygame.sprite.Sprite):
 			self.nitro+=1
 
 
-
+		#GLOBAL VARIABLE FOR RELA
 		global speedo
 		speedo=self.speedy
 
@@ -221,7 +236,7 @@ class strips(pygame.sprite.Sprite):
 			self.rect.top=HIEGHT
 
 
-
+#DYNAMIC SPEED CHANGES
 	def accelerate(self,check):
 
 			if check == True:
@@ -232,6 +247,7 @@ class strips(pygame.sprite.Sprite):
 					self.speedy-=0.05
 
 
+#EXPLOSION CLASS FOR COllisions
 class Explosion(pygame.sprite.Sprite):
 	def __init__(self,center,size):
 		pygame.sprite.Sprite.__init__(self)
@@ -258,6 +274,9 @@ class Explosion(pygame.sprite.Sprite):
 				self.rect.center=center
 
 
+
+#DRAW MINIATURE LIVES
+
 def draw_lives(surf,x,y,lives,img):
 	 for i in range(lives):
 	 	img_rect = img.get_rect()
@@ -265,7 +284,7 @@ def draw_lives(surf,x,y,lives,img):
 	 	img_rect.y=y
 	 	surf.blit(img,img_rect)
 
-
+#STARTING screen
 def show_go_screen():
 	screen.blit(background,background_rect)
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
@@ -300,10 +319,6 @@ shoot_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Laser_Shoot16.wav"))
 explode_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Explosion10.wav"))
 pygame.mixer.music.load(os.path.join(sndfolder,"badguy.mp3"))
 pygame.mixer.music.set_volume(0.5)
-
-
-
-
 pygame.mixer.music.play()
 
 #GAME LOOP
@@ -408,7 +423,7 @@ while running:
 	draw_shield_bar(screen,5,5,player.shield,100)
 	draw_lives(screen,WIDTH-80,5,player.lives,mini_player)
 	draw_text(screen,str(score),18,WIDTH/2,10)
-	draw_shield_bar(screen,5,20,nitr,500)
+	draw_nitro(screen,5,HIEGHT-100,nitr,500)
 
 
 	#after drawing everythong,flip the display
