@@ -76,8 +76,8 @@ def draw_shield_bar(surf,x,y,pct,full):
 	#draw_text(surf,str(pct),10,WIDTH-10,HIEGHT-10)
 	if fill<80 and full!=500:
 		pygame.draw.rect(surf,RED,fill_rect)
-	#else:
-	pygame.draw.rect(surf,(0,255,0),fill_rect)
+	else:
+		pygame.draw.rect(surf,(0,255,0),fill_rect)
 	pygame.draw.rect(surf,WHITE,outline_rect,2)
 
 
@@ -323,7 +323,7 @@ while running:
 		mobs=pygame.sprite.Group()
 
 		for i in range(3):
-			m= Mob(player.speedy,i)
+			m= Mob(player.speedy,i+1)
 			mobs.add(m)
 
 		strip=pygame.sprite.Group()
