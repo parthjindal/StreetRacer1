@@ -9,10 +9,6 @@ game_folder=os.path.dirname(__file__)
 imgfolder=os.path.join(game_folder,"img")
 font_folder=os.path.join(game_folder,"fonts")
 
-
-
-speed_road=0
-
 #initialze pygame and create window
 pygame.init()
 pygame.mixer.init()
@@ -23,22 +19,28 @@ clock = pygame.time.Clock()
 
 
 
-font_name ='/home/parth/pygame/pokemon.ttf'
+font_name ='fonts/pokemon.ttf'
 sndfolder=os.path.join(game_folder,"sounds")
 
 ##LOAD ALL IN GRAPHICS
 background=pygame.image.load(os.path.join(imgfolder,"background.png")).convert()
 
 background=pygame.transform.scale(background,(WIDTH,HIEGHT))
+
 background_rect=background.get_rect()
+
 mini_player=pygame.image.load(os.path.join(imgfolder,"car.png")).convert()
-mini_player=pygame.transform.scale(mini_player,(25,19))
+
+mini_player=pygame.transform.scale(mini_player,(20,30))
+
 mini_player.set_colorkey(BLACK)
+
 explosion_anim={}
+
 explosion_anim['player']=[]
 
-
 explosion_anim['lg']=[]
+
 explosion_anim['sm']=[]
 
 for i in range(9):
@@ -69,18 +71,27 @@ def draw_shield_bar(surf,x,y,pct,full):
 
 	if pct<0:
 		pct=0
-	
+
 	fill=(float(pct)/full)*100
 
 	outline_rect=pygame.Rect(x,y,BAR_LENGTH,BAR_HEIGHT)
 	fill_rect = pygame.Rect(x,y,fill,BAR_HEIGHT)
 	#draw_text(surf,str(pct),10,WIDTH-10,HIEGHT-10)
-	#if fill<80:
-	#	pygame.draw.rect(surf,RED,fill_rect)
-	#else:	
-	per_red=int(255*(1-(float(pct)/float(full))))
-	per_green=int(255*(float(pct)/float(full)))
-	pygame.draw.rect(surf,(0,255,0),fill_rect)
+	if fill<=35 and full!=500:
+		pygame.draw.rect(surf,RED,fill_rect)
+	else:
+		pygame.draw.rect(surf,(0,255,0),fill_rect)
+	pygame.draw.rect(surf,WHITE,outline_rect,2)
+
+def draw_nitro(surf,x,y,pct,full):
+	if pct<0:
+		pct=0
+
+	fill=(float(pct)/full)*100
+
+	outline_rect=pygame.Rect(x,y,BAR_HEIGHT,BAR_LENGTH)
+	fill_rect = pygame.Rect(x,y,BAR_HEIGHT,fill)
+	pygame.draw.rect(surf,(0,255,255),fill_rect)
 	pygame.draw.rect(surf,WHITE,outline_rect,2)
 
 
@@ -88,7 +99,8 @@ def draw_shield_bar(surf,x,y,pct,full):
 
 
 
-	
+
+
 
 
 
@@ -105,7 +117,7 @@ class Player(pygame.sprite.Sprite):
 		self.rect=self.image.get_rect()
 		#pygame.draw.circle(self.image,RED,self.rect.center,self.radius)
 		self.rect.center =  (WIDTH/2,HIEGHT/2)
-		
+
 		self.rect.bottom=HIEGHT-200
 		self.shield=100
 		self.speedx=0
@@ -123,10 +135,10 @@ class Player(pygame.sprite.Sprite):
 			self.rect.bottom=HIEGHT-200
 		self.speedx=0
 		self.speedy=0
-		keystate=pygame.key.get_pressed()						
+		keystate=pygame.key.get_pressed()
 		if keystate[pygame.K_LEFT] or keystate[pygame.K_a]:
 			self.speedx=-4
-			
+
 		if keystate[pygame.K_RIGHT] or keystate[pygame.K_d]:
 			self.speedx=+4
 		'''if keystate[pygame.K_UP] or keystate[pygame.K_w]:
@@ -134,7 +146,7 @@ class Player(pygame.sprite.Sprite):
 		if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
 			self.speedy=+5'''
 		if keystate[pygame.K_SPACE]:
-			
+
 			self.shoot()
 		if self.rect.right>WIDTH:
 			self.rect.right=WIDTH
@@ -167,7 +179,7 @@ class Player(pygame.sprite.Sprite):
 		self.rect.center=(WIDTH/2,200+HIEGHT)
 
 
-	
+
 
 
 class strips(pygame.sprite.Sprite):
@@ -180,14 +192,14 @@ class strips(pygame.sprite.Sprite):
 		self.speedy=0
 		self.nitro=500
 		self.timer=pygame.time.get_ticks()
-		
+
 
 
 	def update(self):
-		
-		
-		keystate=pygame.key.get_pressed()						
-		
+
+
+		keystate=pygame.key.get_pressed()
+
 
 		if self.nitro>20:
 			if keystate[pygame.K_UP] or keystate[pygame.K_w]:
@@ -202,11 +214,11 @@ class strips(pygame.sprite.Sprite):
 
 		if keystate[pygame.K_b]:
 			self.speedy=0
-		if self.nitro<500:	
+		if self.nitro<500:
 			self.nitro+=1
-		
 
 
+		#GLOBAL VARIABLE FOR RELA
 		global speedo
 		speedo=self.speedy
 
@@ -223,10 +235,10 @@ class strips(pygame.sprite.Sprite):
 
 			self.rect.top=HIEGHT
 
-		
 
+#DYNAMIC SPEED CHANGES
 	def accelerate(self,check):
-		
+
 			if check == True:
 				if self.speedy<8:
 					self.speedy+=0.1
@@ -235,6 +247,7 @@ class strips(pygame.sprite.Sprite):
 					self.speedy-=0.05
 
 
+#EXPLOSION CLASS FOR COllisions
 class Explosion(pygame.sprite.Sprite):
 	def __init__(self,center,size):
 		pygame.sprite.Sprite.__init__(self)
@@ -261,6 +274,9 @@ class Explosion(pygame.sprite.Sprite):
 				self.rect.center=center
 
 
+
+#DRAW MINIATURE LIVES
+
 def draw_lives(surf,x,y,lives,img):
 	 for i in range(lives):
 	 	img_rect = img.get_rect()
@@ -268,13 +284,13 @@ def draw_lives(surf,x,y,lives,img):
 	 	img_rect.y=y
 	 	surf.blit(img,img_rect)
 
-
+#STARTING screen
 def show_go_screen():
 	screen.blit(background,background_rect)
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
 	draw_text(screen,"Arrow keys move,Space to fire",40,WIDTH/2,HIEGHT/2)
 	draw_text(screen,"PRESS a key to begin",30,WIDTH/2,HIEGHT-50)
-	
+
 
 	pygame.display.flip()
 	waiting=True
@@ -303,18 +319,14 @@ shoot_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Laser_Shoot16.wav"))
 explode_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Explosion10.wav"))
 pygame.mixer.music.load(os.path.join(sndfolder,"badguy.mp3"))
 pygame.mixer.music.set_volume(0.5)
-
-
-
-
 pygame.mixer.music.play()
 
 #GAME LOOP
-game_over=True 
+game_over=True
 start=0;
 running=True
 while running:
-	
+
 
 	if game_over:
 		show_go_screen()
@@ -326,45 +338,45 @@ while running:
 		mobs=pygame.sprite.Group()
 
 		for i in range(3):
-			m= Mob(player.speedy,i)
+			m= Mob(player.speedy,i+1)
 			mobs.add(m)
 
 		strip=pygame.sprite.Group()
 
 
 		for i in range(4):
-			m=strips(WIDTH/3,((HIEGHT*2*i)/8))	
-			
+			m=strips(WIDTH/3,((HIEGHT*2*i)/8))
+
 			strip.add(m)
 
 		for i in range(4):
-			m=strips((WIDTH*2)/3,((HIEGHT*2*i)/8))	
-			
+			m=strips((WIDTH*2)/3,((HIEGHT*2*i)/8))
+
 			strip.add(m)
 
 		score=0
 	##keep loop running at right speed
 
 	clock.tick(FPS)
-	
+
 	#Process input(events)
 
 	for event in pygame.event.get():
 		##for exit button
 		if event.type==pygame.QUIT:
 			running = False
-		
+
 	#update
 	all_sprites.update()
 	strip.update()
 	mobs.update(speedo)
-	
+
 
 	#collision b/w mob and bullet
 	hits=pygame.sprite.groupcollide(mobs,bullets,True,True)
 
 	for hit in hits:
-		
+
 
 		exp=Explosion(hit.rect.center,'lg')
 		all_sprites.add(exp)
@@ -373,19 +385,19 @@ while running:
 		score+=int(50)
 
 		m=Mob(player.speedy,random.randrange(1,4))
-	
+
 		mobs.add(m)
 
 	#COllision b/w mob and player
 	hits= pygame.sprite.spritecollide(player,mobs,True,)
-	
+
 	for hit in hits:
 		m=Mob(player.speedy,random.randrange(1,4))
-		
+
 		mobs.add(m)
 
 		player.shield-=40
-		 
+
 		exp=Explosion(hit.rect.center,'sm')
 		all_sprites.add(exp)
 		if player.shield<=0:
@@ -395,23 +407,23 @@ while running:
 			player.lives-=1
 			player.shield=100
 
-			
+
 
 	if  player.lives ==0  and not death.alive():
 		game_over=True
 
 
-	#Draw/render		
+	#Draw/render
 	screen.fill(BLACK)
 	screen.blit(background,background_rect)
-	
+
 	strip.draw(screen)
 	all_sprites.draw(screen)
 	mobs.draw(screen)
 	draw_shield_bar(screen,5,5,player.shield,100)
 	draw_lives(screen,WIDTH-80,5,player.lives,mini_player)
 	draw_text(screen,str(score),18,WIDTH/2,10)
-	draw_shield_bar(screen,5,20,nitr,500)
+	draw_nitro(screen,5,HIEGHT-100,nitr,500)
 
 
 	#after drawing everythong,flip the display
