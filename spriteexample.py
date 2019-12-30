@@ -94,10 +94,20 @@ def draw_nitro(surf,x,y,pct,full):
 	pygame.draw.rect(surf,(0,255,255),fill_rect)
 	pygame.draw.rect(surf,WHITE,outline_rect,2)
 
-
-
-
-
+class Button():
+	def __init__(self, msg, x, y):
+		self.height = 50
+		self.width = 100
+		self.font = pygame.font.Font(font_name, 24)
+		self.text_color = BLACK
+		self.bg_color = WHITE
+		self.rect = pygame.Rect(0 , 0, self.width, self.height)
+		self.msg_img = self.font.render(msg, True, self.text_color, self.bg_color)
+		self.msg_rect = self.msg_img.get_rect()
+		self.rect.centerx, self.rect.centery = x, y
+		self.msg_rect.centerx, self.msg_rect.centery = x, y
+		screen.fill(self.bg_color, self.rect)
+		screen.blit(self.msg_img, self.msg_rect)
 
 
 
@@ -290,8 +300,7 @@ def show_go_screen():
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
 	draw_text(screen,"Arrow keys move,Space to fire",40,WIDTH/2,HIEGHT/2)
 	draw_text(screen,"PRESS a key to begin",30,WIDTH/2,HIEGHT-50)
-
-
+	button=Button("START",WIDTH/2,600)
 	pygame.display.flip()
 	waiting=True
 
@@ -300,9 +309,12 @@ def show_go_screen():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
-			if event.type==pygame.KEYUP:
-				start=True
-				waiting=False
+			if event.type==pygame.MOUSEBUTTONDOWN:
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				if button.rect.collidepoint(mouse_x, mouse_y):
+					waiting = False
+					running=True
+
 
 
 
