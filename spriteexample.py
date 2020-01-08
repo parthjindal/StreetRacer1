@@ -19,7 +19,7 @@ clock = pygame.time.Clock()
 
 
 
-font_name ='fonts/pokemon.ttf'
+font_name ='fonts/font.ttf'
 sndfolder=os.path.join(game_folder,"sounds")
 
 ##LOAD ALL IN GRAPHICS
@@ -34,6 +34,7 @@ mini_player=pygame.image.load(os.path.join(imgfolder,"car.png")).convert()
 mini_player=pygame.transform.scale(mini_player,(20,30))
 
 mini_player.set_colorkey(BLACK)
+
 
 explosion_anim={}
 
@@ -211,11 +212,14 @@ class strips(pygame.sprite.Sprite):
 		keystate=pygame.key.get_pressed()
 
 
-		if self.nitro>20:
-			if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+
+		if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+			if self.nitro>20:
 				self.accelerate(True)
 				if(self.nitro>0):
 					self.nitro-=2
+			else:
+				self.speedy-=0.05
 
 		if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
 			self.accelerate(False)
@@ -234,6 +238,8 @@ class strips(pygame.sprite.Sprite):
 
 		global nitr
 		nitr=self.nitro
+
+
 
 		self.accelerate(False)
 		self.rect.y+=self.speedy
@@ -298,7 +304,8 @@ def draw_lives(surf,x,y,lives,img):
 def show_go_screen():
 	screen.blit(background,background_rect)
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
-	draw_text(screen,"Arrow keys move,Space to fire",40,WIDTH/2,HIEGHT/2)
+	draw_text(screen,"ARROW KEYS TO MOVE ",40,WIDTH/2,HIEGHT/2)
+	draw_text(screen,"PRESS SPACE TO FIRE!! ",40,WIDTH/2,HIEGHT/1.5)
 	draw_text(screen,"PRESS a key to begin",30,WIDTH/2,HIEGHT-50)
 	button=Button("START",WIDTH/2,600)
 	pygame.display.flip()
