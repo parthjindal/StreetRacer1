@@ -1,2 +1,10 @@
 # STREET RACER 1.0
 racing game made using pygame library
+
+PRESS WASD TO MOVE FORWARD SLOW DOWN LEFT AND RIGHT OR USE ARROW KEYS
+
+PRESS B TO IMMEDIATELY BRAKE
+
+PRESS SPACE TO FIRE
+
+/home/parth/Desktop/Screenshot from 2020-01-23 16-23-29.png
