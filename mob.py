@@ -16,18 +16,19 @@ class Mob(pygame.sprite.Sprite):
 		self.image_orig=pygame.image.load(os.path.join(imgfolder,"mob.png")).convert()
 		self.image_orig.set_colorkey(BLACK)
 		self.image=self.image_orig.copy()
-		self.image=pygame.transform.scale(self.image,(90,175))
+		self.image=pygame.transform.scale(self.image,(100,180))
+		self.radius=60
 
 		##self.image=pygame.Surface((30,40))
 		##self.image.fill((random.randrange(0,255),random.randrange(0,255),random.randrange(0,255)))
 		self.rect=self.image.get_rect()
-
-		#pygame.draw.circle(self.image,RED,self.rect.center,self.radius)
-		self.rect.x=random.randrange((WIDTH*(i-1))/3,(WIDTH*i)/3)
+		#pygame.draw.circle(self.image,GREEN,self.rect.center,self.radius)
+		self.rect.x=float(WIDTH*(2*i-1))/(6)
 		self.rect.top=0
 		self.speedy=-random.randrange(1,3)
 		self.relsspeed=self.speedy
 		self.speedx=0
+		self.i=i
 
 		'''self.rot=0
 		self.rot_speed= random.randrange(-20,20)

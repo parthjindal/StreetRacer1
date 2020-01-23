@@ -22,6 +22,14 @@ clock = pygame.time.Clock()
 font_name ='fonts/font.ttf'
 sndfolder=os.path.join(game_folder,"sounds")
 
+
+##LOAD SOUNDS
+shoot_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Laser_Shoot16.wav"))
+explode_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Explosion10.wav"))
+accelerate_sound=pygame.mixer.Sound(os.path.join(sndfolder,"speed.wav"))
+accelerate_sound.set_volume(0.1)
+
+
 ##LOAD ALL IN GRAPHICS
 background=pygame.image.load(os.path.join(imgfolder,"background.png")).convert()
 
@@ -122,7 +130,7 @@ class Player(pygame.sprite.Sprite):
 		self.image=pygame.image.load(os.path.join(imgfolder,"car.png")).convert()
 		self.image.set_colorkey(BLACK)
 		self.image=pygame.transform.scale(self.image,(120,200))
-		self.radius=20
+		self.radius=50
 		#self.image=pygame.Surface((50,40))
 		#self.image.fill(GREEN)
 		self.rect=self.image.get_rect()
@@ -214,20 +222,29 @@ class strips(pygame.sprite.Sprite):
 
 
 		if keystate[pygame.K_UP] or keystate[pygame.K_w]:
+
 			if self.nitro>20:
 				self.accelerate(True)
+				accelerate_sound.play()
 				if(self.nitro>0):
 					self.nitro-=2
 			else:
 				self.speedy-=0.05
+				accelerate_sound.fadeout(2000)
 
-		if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+		elif keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+			accelerate_sound.fadeout(1000)
 			self.accelerate(False)
 			if(self.nitro<500):
 				self.nitro+=2
 
-		if keystate[pygame.K_b]:
+		elif keystate[pygame.K_b]:
 			self.speedy=0
+			accelerate_sound.fadeout(1000)
+
+		else:
+			accelerate_sound.fadeout(1000)
+
 		if self.nitro<500:
 			self.nitro+=1
 
@@ -306,7 +323,7 @@ def show_go_screen():
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
 	draw_text(screen,"ARROW KEYS TO MOVE ",40,WIDTH/2,HIEGHT/2)
 	draw_text(screen,"PRESS SPACE TO FIRE!! ",40,WIDTH/2,HIEGHT/1.5)
-	draw_text(screen,"PRESS a key to begin",30,WIDTH/2,HIEGHT-50)
+	draw_text(screen,"PRESS A KEY TO BEGIN!",30,WIDTH/2,HIEGHT-50)
 	button=Button("START",WIDTH/2,600)
 	pygame.display.flip()
 	waiting=True
@@ -332,11 +349,7 @@ def show_go_screen():
 
 
 
-
-##LOAD SOUNDS
-shoot_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Laser_Shoot16.wav"))
-explode_sound=pygame.mixer.Sound(os.path.join(sndfolder,"Explosion10.wav"))
-pygame.mixer.music.load(os.path.join(sndfolder,"badguy.mp3"))
+pygame.mixer.music.load(os.path.join(sndfolder,"Regard - Ride it (Official Audio).mp3"))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play()
 
@@ -344,6 +357,7 @@ pygame.mixer.music.play()
 game_over=True
 start=0;
 running=True
+score_time1=pygame.time.get_ticks()
 while running:
 
 
@@ -389,7 +403,11 @@ while running:
 	all_sprites.update()
 	strip.update()
 	mobs.update(speedo)
-
+	score_time2=pygame.time.get_ticks()
+	#DYNAMIC SCORING ADDED
+	if score_time2-score_time1>=100:
+		score+=int(0.3*speedo)
+		score_time1=score_time2
 
 	#collision b/w mob and bullet
 	hits=pygame.sprite.groupcollide(mobs,bullets,True,True)
@@ -403,21 +421,22 @@ while running:
 		explode_sound.play()
 		score+=int(50)
 
-		m=Mob(player.speedy,random.randrange(1,4))
+		m=Mob(player.speedy,hit.i)
 
 		mobs.add(m)
 
 	#COllision b/w mob and player
-	hits= pygame.sprite.spritecollide(player,mobs,True,)
+	hits= pygame.sprite.spritecollide(player,mobs,True,pygame.sprite.collide_circle)
 
 	for hit in hits:
-		m=Mob(player.speedy,random.randrange(1,4))
+		m=Mob(player.speedy,hit.i)
 
 		mobs.add(m)
 
 		player.shield-=40
 
 		exp=Explosion(hit.rect.center,'sm')
+
 		all_sprites.add(exp)
 		if player.shield<=0:
 			death=Explosion(player.rect.center,'player')
