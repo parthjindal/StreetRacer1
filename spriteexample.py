@@ -11,7 +11,7 @@ font_folder=os.path.join(game_folder,"fonts")
 
 #initialze pygame and create window
 pygame.init()
-pygame.mixer.init()
+pygame.mixer.init(frequency=48000)
 screen=pygame.display.set_mode((WIDTH,HIEGHT))
 pygame.display.set_caption("SHOOT EM UP")
 clock = pygame.time.Clock()
@@ -323,7 +323,7 @@ def show_go_screen():
 	draw_text(screen,"STREET RACER 1.0!",64,WIDTH/2,HIEGHT/4)
 	draw_text(screen,"ARROW KEYS TO MOVE ",40,WIDTH/2,HIEGHT/2)
 	draw_text(screen,"PRESS SPACE TO FIRE!! ",40,WIDTH/2,HIEGHT/1.5)
-	draw_text(screen,"PRESS A KEY TO BEGIN!",30,WIDTH/2,HIEGHT-50)
+	draw_text(screen,"PRESS START TO BEGIN!",30,WIDTH/2,HIEGHT-50)
 	button=Button("START",WIDTH/2,600)
 	pygame.display.flip()
 	waiting=True
@@ -343,14 +343,8 @@ def show_go_screen():
 
 
 
-
-
-
-
-
-
-pygame.mixer.music.load(os.path.join(sndfolder,"Regard - Ride it (Official Audio).mp3"))
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.load(os.path.join(sndfolder,"rid.aiff"))
+pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play()
 
 #GAME LOOP
