@@ -7,4 +7,4 @@ PRESS B TO IMMEDIATELY BRAKE
 
 PRESS SPACE TO FIRE
 
-/home/parth/Desktop/Screenshot from 2020-01-23 16-23-29.png
+
